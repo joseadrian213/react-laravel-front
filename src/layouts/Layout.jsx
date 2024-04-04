@@ -6,6 +6,7 @@ import Sidebar from "../components/Sidebar";
 import Resumen from "../components/Resumen";
 import ModalProducto from "../components/ModalProducto";
 import useQuiosco from "../hooks/useQuiosco";
+import { useAuth } from "../hooks/useAuth";
 
 const customStyles = {
   content: {
@@ -19,6 +20,7 @@ const customStyles = {
 };
 Modal.setAppElement('#root')
 export default function Layout() {
+  const {user,error}=useAuth({middleware:'auth'})
   const {modal}=useQuiosco(); 
 
   return (
@@ -34,7 +36,7 @@ export default function Layout() {
       {
         <>
         
-        //El isOpen indica cuando va estar abierto el modal por true o false 
+        {/* //El isOpen indica cuando va estar abierto el modal por true o false  */}
         <Modal isOpen={modal} style={customStyles}>
           <ModalProducto  />
         </Modal>

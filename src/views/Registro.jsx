@@ -1,8 +1,7 @@
 import { createRef, useState } from "react";
 import { Link } from "react-router-dom";
-import clienteAxios from "../config/axios";
 import Alerta from "../components/Alerta";
-
+import { useAuth } from "../hooks/useAuth";
 export default function Registro() {
   const nameRef = createRef();
   const emailRef = createRef();
@@ -10,27 +9,19 @@ export default function Registro() {
   const passwordConfirmationRef = createRef();
 
   const [errores, setErrores] = useState([]);
+  //Si el usuario se registra correctamente se le enviara al inicio 
+  const {registro}=useAuth({middleware:'guest',url:'/'})
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const datos = {
-      //obtenemos la informacion de los inputs
+      //obtenemos la informacion de los inputs y la debemos  de enviar como la espera laravel 
       name: nameRef.current.value,
       email: emailRef.current.value,
       password: passwordRef.current.value,
       password_confirmation: passwordConfirmationRef.current.value,
     };
-
-    try {
-      //Enviamos los datos como un objeto plano
-      const respuesta = await clienteAxios.post("/api/registro", datos);
-      console.log(respuesta);
-    } catch (error) {
-      //Asi es como accedemos a los errores que obtenemos de laravel y podemos mostrarlos
-      if (error.response.data.errors) {
-        setErrores(Object.values(error.response.data.errors));
-      }
-    }
+    registro(datos,setErrores)
   };
 
   return (

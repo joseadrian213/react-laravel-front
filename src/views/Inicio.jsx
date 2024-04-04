@@ -8,15 +8,19 @@ export default function Inicio() {
   const {categoriaActual}=useQuiosco()
 
   //Consulta SWR
-
-  const fetcher=() => clienteAxios('/api/productos').then(data=>data.data)
+  const token=localStorage.getItem('AUTH_TOKEN')
+  const fetcher=() => clienteAxios('/api/productos',{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  }).then(data=>data.data)
  
   const {data,error,isLoading}=useSWR('/api/productos',fetcher,{
     refreshInterval:1000 //indicamos que despues de un segundo debe de refrescar la informacion 
   })
 //Cargamos los productos hasta que terminen de cargar con isLoading 
-if (isLoading) return 'Cargando'
-  const productos=data.data.filter(producto=>producto.categoria_id===categoriaActual.id)
+if (isLoading) return 'Cargando...'
+  const productos=data?.data.filter(producto=>producto.categoria_id===categoriaActual.id)
   return (
     <>
       <h1 className='text-4xl font-black'>{categoriaActual.nombre}</h1>
@@ -28,6 +32,7 @@ if (isLoading) return 'Cargando'
           < Producto 
           key={producto.id}
           producto={producto}
+          botonAgregar={true}
           />
         ))}
       </div>
